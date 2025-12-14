@@ -1,35 +1,41 @@
 const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 const options = {
   definition: {
-    openapi: "3.0.0",
+    openapi: "3.0.0", // 🔥 REQUIRED
     info: {
-      title: "ShopStream API",
+      title: "Job Board API",
       version: "1.0.0",
-      description: "E-commerce REST API with OAuth authentication"
+      description: "Final Project API with JWT & Google OAuth",
     },
     servers: [
       {
-        url: "https://your-render-url.onrender.com",
-        description: "Production server"
+        url: "http://localhost:3000",
+        description: "Local server",
       },
       {
-        url: "http://localhost:3000",
-        description: "Local server"
-      }
+        url: "https://your-render-url.onrender.com",
+        description: "Production server",
+      },
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
           type: "http",
           scheme: "bearer",
-          bearerFormat: "JWT"
-        }
-      }
+          bearerFormat: "JWT",
+        },
+      },
     },
-    security: [{ bearerAuth: [] }]
   },
-  apis: ["./routes/*.js"]
+
+  // 🔥 VERY IMPORTANT: correct path
+  apis: ["./routes/*.js"],
 };
 
-module.exports = swaggerJsdoc(options);
+const swaggerSpec = swaggerJsdoc(options);
+
+module.exports = (app) => {
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+};
